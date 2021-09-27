@@ -26,7 +26,7 @@ nvars = nvars - length(idx);
 % Based on histogram(time_full), the maintenance seems to be between
 % 7.36772e5 and 7.36782e5
 TIME_THRESHOLD = 7.3678e5;
-after_maintenance_filter = time > TIME_THRESHOLD;
+after_maintenance_filter = time_full > TIME_THRESHOLD;
 after_maintenance_time = time_full(after_maintenance_filter);
 after_maintenance_data = normalized(after_maintenance_filter, :);
 
