@@ -3,7 +3,7 @@ CACHE_NAME = "../dataset/cache.mat";
 cache_exists = isfile(CACHE_NAME);
 
 if cache_exists
-    data = load(CACHE_NAME);
+    load(CACHE_NAME);
 else
     data = read_data_from_csv();
     save(CACHE_NAME, "data");
