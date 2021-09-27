@@ -5,6 +5,7 @@ addpath("../dataset");
 all_data = get_data();
 varnames = all_data.varnames;
 time_full = all_data.time;
+time_full = time_full - min(time_full) + 1;
 nvars = length(varnames);
 
 % Normalize
@@ -25,14 +26,14 @@ nvars = nvars - length(idx);
 
 % Based on histogram(time_full), the maintenance seems to be between
 % 7.36772e5 and 7.36782e5
-TIME_THRESHOLD = 7.3678e5;
+TIME_THRESHOLD = 15;
 after_maintenance_filter = time_full > TIME_THRESHOLD;
 after_maintenance_time = time_full(after_maintenance_filter);
 after_maintenance_data = normalized(after_maintenance_filter, :);
 
-% To apply:
-% time_full = after_maintenance_time
-% normalized = after_maintenance_data
+% Applying
+time_full = after_maintenance_time;
+normalized = after_maintenance_data;
 
 %% Outlier Removal
 % PCA
