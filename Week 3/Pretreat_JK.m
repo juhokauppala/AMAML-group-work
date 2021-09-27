@@ -23,6 +23,17 @@ nvars = nvars - length(idx);
 % period could help prevent different performance from before maintainance
 % affecting the result on a maintained system.
 
+% Based on histogram(time_full), the maintenance seems to be between
+% 7.36772e5 and 7.36782e5
+TIME_THRESHOLD = 7.3678e5;
+after_maintenance_filter = time > TIME_THRESHOLD;
+after_maintenance_time = time_full(after_maintenance_filter);
+after_maintenance_data = normalized(after_maintenance_filter, :);
+
+% To apply:
+% time_full = after_maintenance_time
+% normalized = after_maintenance_data
+
 %% Outlier Removal
 % PCA
 [~, ~, ~, TSQUARED, ~] = pca(normalized);
