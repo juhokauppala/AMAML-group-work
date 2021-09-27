@@ -28,7 +28,7 @@ nvars = nvars - length(idx);
 [~, ~, ~, TSQUARED, ~] = pca(normalized);
 
 % Outliers
-OUTLIER_THRESHOLD = 100;
+OUTLIER_THRESHOLD = 53;
 outliers = TSQUARED >= OUTLIER_THRESHOLD;
 data_without_outliers = normalized(~outliers, :);
 p_reduced = 100*(1 - size(data_without_outliers,1)/size(normalized,1));
@@ -40,7 +40,7 @@ subplot(2,1,1)
 histogram(TSQUARED,nbins)
 subplot(2,1,2)
 histogram(TSQUARED(~outliers),nbins)
-sgtitle({"Histograms of TSQUARED values","(Percent Reduction in Data = " + ...
+sgtitle({"Histograms of T^2 values","(Percent Reduction in Data = " + ...
                                         num2str(round(p_reduced,1)) + "%)"})
                                     
 %% Time averaging fast (20s inc) variables
