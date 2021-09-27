@@ -28,7 +28,7 @@ nvars = nvars - length(idx);
 [~, ~, ~, TSQUARED, ~] = pca(normalized);
 
 % Outliers
-OUTLIER_THRESHOLD = 53;
+OUTLIER_THRESHOLD = 100;
 outliers = TSQUARED >= OUTLIER_THRESHOLD;
 data_without_outliers = normalized(~outliers, :);
 p_reduced = 100*(1 - size(data_without_outliers,1)/size(normalized,1));
