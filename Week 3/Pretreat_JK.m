@@ -11,7 +11,9 @@ nvars = length(varnames);
 normalized = normalize(all_data.values);
 
 %% Remove Iron Outlet
-idx = find(contains(varnames,'Iron Outlet'));
+% Variables got renamed in get_data() from the cleaner ones with spaces 
+% we had before, we might want them back by the end
+idx = find(contains(varnames,'IronConcentrate'));
 normalized(:,idx) = [];
 varnames(idx) = [];
 nvars = nvars - length(idx);
