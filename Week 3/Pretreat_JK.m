@@ -25,6 +25,7 @@ subtimeplots(time_full, data_raw, x:min(x+4-1, nvars), varnames);
 % 7.36772e5 and 7.36782e5
 % When reset to 0, time threshold becomes 20 = min(time_full) + 19
 TIME_THRESHOLD = min(time_full) + 19;
+
 after_maintenance_filter = time_full > TIME_THRESHOLD;
 after_maintenance_time = time_full(after_maintenance_filter);
 after_maintenance_data = data_raw(after_maintenance_filter, :);
