@@ -11,6 +11,32 @@ nvars = length(varnames);
 % Normalize
 normalized = normalize(all_data.values);
 
+%% Remove downtime period
+% Given how much data is available, removing everything before downtime
+% period could help prevent different performance from before maintainance
+% affecting the result on a maintained system.
+
+% Plot before
+data_raw = all_data.values;
+x = 21;
+subtimeplots(time_full, data_raw, x:min(x+4-1, nvars), varnames);
+
+% Based on histogram(time_full), the maintenance seems to be between
+% 7.36772e5 and 7.36782e5
+% When reset to 0, time threshold becomes 20 = min(time_full) + 19
+TIME_THRESHOLD = min(time_full) + 19;
+
+after_maintenance_filter = time_full > TIME_THRESHOLD;
+after_maintenance_time = time_full(after_maintenance_filter);
+after_maintenance_data = data_raw(after_maintenance_filter, :);
+
+% To apply:
+time_full = after_maintenance_time;
+data_raw = after_maintenance_data;
+
+% Plot after
+subtimeplots(time_full, data_raw, x:min(x+4-1, nvars), varnames);
+
 %% Remove Iron Outlet
 % Variables got renamed in get_data() from the cleaner ones with spaces 
 % we had before, we might want them back by the end
@@ -18,22 +44,6 @@ idx = find(contains(varnames,'IronConcentrate'));
 normalized(:,idx) = [];
 varnames(idx) = [];
 nvars = nvars - length(idx);
-
-%% Remove downtime period
-% Given how much data is available, removing everything before downtime
-% period could help prevent different performance from before maintainance
-% affecting the result on a maintained system.
-
-% Based on histogram(time_full), the maintenance seems to be between
-% 8 and 20
-TIME_THRESHOLD = 15;
-after_maintenance_filter = time_full > TIME_THRESHOLD;
-after_maintenance_time = time_full(after_maintenance_filter);
-after_maintenance_data = normalized(after_maintenance_filter, :);
-
-% Applying
-time_full = after_maintenance_time;
-normalized = after_maintenance_data;
 
 %% Outlier Removal
 % PCA
@@ -72,3 +82,17 @@ sgtitle({"Histograms of T^2 values","(Percent Reduction in Data = " + ...
 % % variable only updates every hour, using data for every 20s is excessive.
 % % Still working out how to do this tho.
 
+%% functions
+
+function subtimeplots(time, data, columns, names)
+    figure
+    width = 1;
+    height = ceil(length(columns)/width);
+    j = 0;
+    for i = columns
+        j = j + 1;
+        subplot(height, width, j)
+        scatter(time, data(:,i), '.')
+        title(convertCharsToStrings(names{i}))
+    end
+end
