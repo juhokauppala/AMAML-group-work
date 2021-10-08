@@ -31,7 +31,7 @@ table_data = readtable("MiningProcess_Flotation_Plant_Database.csv", opts);
 %% Convert to output type
 data.time = datenum(table_data{:,1});
 data.varnames = table_data.Properties.VariableNames(2:end);
-data.values = normalize(table2array(table_data(:, 2:end)));
+data.values = table2array(table_data(:, 2:end));
 
 %% Clear temporary variables
 clear opts
