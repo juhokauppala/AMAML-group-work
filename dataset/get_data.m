@@ -1,5 +1,5 @@
 function [data] = get_data()
-CACHE_NAME = "../dataset/cache.mat";
+CACHE_NAME = "dataset/cache.mat";
 cache_exists = isfile(CACHE_NAME);
 
 if cache_exists

@@ -1,15 +1,13 @@
 %% Based on visualize_JR on 26.9. 17:30
 
-clc; close all; clearvars;
-addpath("../dataset");
+function [] = visualize(raw_data)
 
 %% Prep data
-T = get_data();                         % pull raw mining data as table
-varnames = {T};
+varnames = raw_data.varnames(2:end);
 
 % Convert to matlab array/matrix
-time = datenum(T{:,1});     % time separate for easy use of other data
-data_raw = table2array(T(:,2:end));
+time = raw_data.time;     % time separate for easy use of other data
+data_raw = raw_data.values(:,2:end);
 data = normalize(data_raw);
 
 %% Box plot
@@ -37,4 +35,5 @@ for i = 1:size(data_raw,2)
     subplot(6,4,i)
     hist(data_raw(:,i))
     title(varnames{i})
+end
 end
