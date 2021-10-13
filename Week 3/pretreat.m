@@ -1,15 +1,13 @@
-clc; clearvars; close all;
-
+function [treated] = pretreat(raw_data)
 %% Get data
-addpath("../dataset");
-all_data = get_data();
-varnames = all_data.varnames;
-time_full = all_data.time;
+
+varnames = raw_data.varnames;
+time_full = raw_data.time;
 time_full = time_full - min(time_full) + 1;
 nvars = length(varnames);
 
 % Normalize
-normalized = normalize(all_data.values);
+normalized = normalize(raw_data.values);
 
 %% Remove downtime period
 % Given how much data is available, removing everything before downtime
@@ -17,7 +15,7 @@ normalized = normalize(all_data.values);
 % affecting the result on a maintained system.
 
 % Plot before
-data_raw = all_data.values;
+data_raw = raw_data.values;
 x = 21;
 subtimeplots(time_full, data_raw, x:min(x+4-1, nvars), varnames);
 
@@ -82,6 +80,7 @@ sgtitle({"Histograms of T^2 values","(Percent Reduction in Data = " + ...
 % % variable only updates every hour, using data for every 20s is excessive.
 % % Still working out how to do this tho.
 
+treated = data_without_outliers;
 %% functions
 
 function subtimeplots(time, data, columns, names)
@@ -95,4 +94,5 @@ function subtimeplots(time, data, columns, names)
         scatter(time, data(:,i), '.')
         title(convertCharsToStrings(names{i}))
     end
+end
 end
