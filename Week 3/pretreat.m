@@ -1,13 +1,12 @@
 function [treated] = pretreat(raw_data)
 %% Get data
-
 varnames = raw_data.varnames;
 time_full = raw_data.time;
 time_full = time_full - min(time_full) + 1;
 nvars = length(varnames);
 
 % Normalize
-normalized = normalize(raw_data.values);
+data_norm = normalize(raw_data.values);
 
 %% Remove downtime period
 % Given how much data is available, removing everything before downtime
@@ -39,19 +38,19 @@ subtimeplots(time_full, data_raw, x:min(x+4-1, nvars), varnames);
 % Variables got renamed in get_data() from the cleaner ones with spaces 
 % we had before, we might want them back by the end
 idx = find(contains(varnames,'IronConcentrate'));
-normalized(:,idx) = [];
+data_norm(:,idx) = [];
 varnames(idx) = [];
 nvars = nvars - length(idx);
 
 %% Outlier Removal
 % PCA
-[~, ~, ~, TSQUARED, ~] = pca(normalized);
+[~, ~, ~, TSQUARED, ~] = pca(data_norm);
 
 % Outliers
 OUTLIER_THRESHOLD = 100;
 outliers = TSQUARED >= OUTLIER_THRESHOLD;
-data_without_outliers = normalized(~outliers, :);
-p_reduced = 100*(1 - size(data_without_outliers,1)/size(normalized,1));
+data_outr = data_norm(~outliers, :);
+p_reduced = 100*(1 - size(data_outr,1)/size(data_norm,1));
 
 % Plot results with histograms
 figure
@@ -62,26 +61,45 @@ subplot(2,1,2)
 histogram(TSQUARED(~outliers),nbins)
 sgtitle({"Histograms of T^2 values","(Percent Reduction in Data = " + ...
                                         num2str(round(p_reduced,1)) + "%)"})
-                                    
-%% Time averaging fast (20s inc) variables
-% inc =  5:10:length(time_full);
-% data_full = data;
-% time = zeros(length(inc),1);
-% data = zeros(length(inc),nvars);
-% fastvars = 3:21;
-% i = 0;
-% for t = inc
-%     i = i + 1;
-%     low = t-4; high = min(t+5,time_full(end));
-%     time(i) = mean(time_full(low:high));
-%     data(i,:) = mean(data_full(low:high, :));
-% end
-% % TODO reduce data size by combining very fast data. Since the output
-% % variable only updates every hour, using data for every 20s is excessive.
-% % Still working out how to do this tho.
 
-treated = data_without_outliers;
+                                    
+%% Average fast (20s inc) variables into 1hr inc, using 1hr inc time var
+time = unique(time_full);
+n = length(time);
+treated = zeros(length(time),size(data_outr,2));
+for t = 1:length(time)
+    idxa = find(time_full == time(t),1,'first');
+    idxb = find(time_full == time(t),1,'last');
+    treated(t,:) = mean(data_outr(idxa:idxb,:));
+end
+% Align output silica conc to the previous process values that actually
+% determine it:
+for t = 1:length(time)-1
+    treated(t,end) = treated(t+1,end);
+end
+treated = treated(1:end-1,:); % Remove incomplete final sample
+
+%% Plot cleaned/treated dataset
+subhists(treated, 3:7, varnames);
+subhists(treated, 8:14, varnames);
+subhists(treated, 15:nvars-1, varnames);
+subhists(treated, [1 2 nvars], varnames);
+
 %% functions
+
+function subhists(data, columns, names)
+    figure
+    width = 1;
+    height = ceil(length(columns)/width);
+    j = 0;
+    for i = columns
+        j = j + 1;
+        subplot(height, width, j)
+        histogram(data(:,i), 100)
+        title(convertCharsToStrings(names{i}))
+        axis([-3 3 0 inf])
+    end
+end
 
 function subtimeplots(time, data, columns, names)
     figure
