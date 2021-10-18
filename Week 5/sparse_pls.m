@@ -34,6 +34,9 @@ for c_u_i = 1:length(c_us)
     result(c_u_i, :) = [c_u, r2];
 end
 sparse_pls_results = table(result(:, 1), result(:, 2), 'VariableNames', {'c_u', 'R2'})
+figure;
+plot(Y, estimates, 'r.');
+xlabel('Observed values'); ylabel ('Estimated values'); title('SPLS (last row of results)');
 end
 
 function [u, v] = my_spls(X, Y, c_u, c_v)
@@ -61,4 +64,3 @@ while ~is_ready
     is_ready = greater_change < 1e-5;
 end
 end
-

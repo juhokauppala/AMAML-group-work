@@ -23,6 +23,15 @@ addpath("Week 5");
 results.pls = pls(pretreated_data);
 results.pcr = pcr(pretreated_data);
 
-%results.spline_pls = spline_pls(pretreated_data);
+
 results.sparse_pls = sparse_pls(pretreated_data);
 results.kernel_pls = kernel_pls(pretreated_data);
+
+%% Sparse PLS code
+% <include>sparse_pls.m</include>
+%% Sparse PLS function: S
+% <include>S.m</include>
+%% Sparse PLS function: find_lambda
+% <include>find_lambda.m</include>
+%% Sparse PLS function: update_uv
+% <include>update_uv.m</include>

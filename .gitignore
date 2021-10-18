@@ -1,2 +1,4 @@
 dataset/*.csv
 dataset/cache.mat
+html
+*.asv
