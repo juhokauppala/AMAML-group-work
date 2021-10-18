@@ -35,3 +35,5 @@ results.kernel_pls = kernel_pls(pretreated_data);
 % <include>find_lambda.m</include>
 %% Sparse PLS function: update_uv
 % <include>update_uv.m</include>
+%% Sparse PLS function: spls (From public github implementation)
+% <include>spls.m</include>
