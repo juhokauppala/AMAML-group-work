@@ -23,6 +23,6 @@ addpath("Week 5");
 results.pls = pls(pretreated_data);
 results.pcr = pcr(pretreated_data);
 
-results.spline_pls = spline_pls(pretreated_data);
+%results.spline_pls = spline_pls(pretreated_data);
 results.sparse_pls = sparse_pls(pretreated_data);
 results.kernel_pls = kernel_pls(pretreated_data);
