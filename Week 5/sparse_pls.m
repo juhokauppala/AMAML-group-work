@@ -11,12 +11,19 @@ addpath("Week 5/spls");
 X = data(:,1:end-1);
 Y = data(:,end);
 
-runs = 15;
+runs = 6;
 result = zeros(runs, 2);
 c_us = linspace(1, sqrt(size(X, 2)), runs);
 for c_u_i = 1:length(c_us)
     c_u = c_us(c_u_i);
+    
+    % This is the open source implementation by Joao Monteiro under GNU
+    % General Public Licence
+    % [u, v] = spls(X, Y, c_u, 1);
+    
+    % This is our own implementation
     [u, v] = my_spls(X, Y, c_u, 1);
+    
     if v ~= 1, disp(v), end
 
     estimates = sum(X .* u', 2);
@@ -26,6 +33,7 @@ for c_u_i = 1:length(c_us)
     
     result(c_u_i, :) = [c_u, r2];
 end
+sparse_pls_results = table(result(:, 1), result(:, 2), 'VariableNames', {'c_u', 'R2'})
 end
 
 function [u, v] = my_spls(X, Y, c_u, c_v)
