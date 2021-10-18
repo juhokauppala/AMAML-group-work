@@ -5,41 +5,35 @@ function [result] = sparse_pls(data)
 %   https://github.com/jmmonteiro/spls/blob/master/spls.m
 %
 %   The example solution is used in advisory manner while writing this code.
+addpath("Week 5/spls");
 
 % 2.2.1. SPLS algorithm
 X = data(:,1:end-1);
 Y = data(:,end);
 
-%[u, v, success] = my_spls(X, Y, sqrt(21), 1);
-[u, v, success] = spls(X, Y, sqrt(21), 1);
-if ~success
-    warning('SPLS not successful');
+runs = 15;
+result = zeros(runs, 2);
+c_us = linspace(1, sqrt(size(X, 2)), runs);
+for c_u_i = 1:length(c_us)
+    c_u = c_us(c_u_i);
+    [u, v] = my_spls(X, Y, c_u, 1);
+    if v ~= 1, disp(v), end
+
+    estimates = sum(X .* u', 2);
+    total_var = sum((Y - mean(Y)).^2);
+    residuals = sum((estimates - Y).^2);
+    r2 = 1 - (residuals / total_var);
+    
+    result(c_u_i, :) = [c_u, r2];
+end
 end
 
-estimates = sum(X .* u', 2);
-disp("SPLS stats:");
-total_var = sum((Y - mean(Y)).^2)
-residuals = sum((estimates - Y).^2)
-r2 = 1 - (residuals / total_var)
-result = [];
-end
-
-function [b] = S(a, lambda)
-b = sign(a) * max((abs(a) - lambda), 0);
-end
-
-% UNFINISHED
-function [U_out, V_out] = iterate(V, C)
-U_new = C * V;
-end
-
-% UNFINISHED - DO NOT USE YET
-function [u, v, success] = my_spls(X, Y, su, sv)
+function [u, v] = my_spls(X, Y, c_u, c_v)
 % 1 Let C <- X'Y
 C = X' * Y;
 
 % 2 Initialize v to have norm(v, 2) = 1
-[U, ~, V] = svd(X);
+[U, ~, V] = svd(C);
 U = U(:, 1) ./ norm(U(:, 1));
 V = V(:, 1) ./ norm(V(:, 1));
 
@@ -50,7 +44,13 @@ end
 % 3 Repeat until convergence
 is_ready = false;
 while ~is_ready
-    [u, v] = iterate(V, C);
+    [u, v] = update_uv(V, C, c_u, c_v);
+    
+    greater_change = max(norm(U - u), norm(V - v));
+    
+    U = u;
+    V = v;
+    is_ready = greater_change < 1e-5;
 end
-success = false;
 end
+
