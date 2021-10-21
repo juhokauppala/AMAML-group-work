@@ -1,15 +1,15 @@
-function rsqKPLS = kernel_pls(data)
+function rsqKPLS = kernel_pls(dataX, dataY)
 %PLS Summary of this function goes here
 %   Detailed explanation goes here
 %% Prep data
 % Get data
-X = data(:,1:end-1);
-Y = data(:,end);
+X = dataX;
+Y = dataY;
 
 % Meta variables
 m = size(X,2);
 
-% Normalize
+% Normalize - it's already pretreated
 X = zscore(X);
 
 %% Finding PCs

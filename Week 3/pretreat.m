@@ -1,4 +1,5 @@
-function [treated] = pretreat(raw_data)
+function [treatedX, treatedY] = pretreat(raw_data)
+%% Modified Sab 21.10 
 %% Get data
 varnames = raw_data.varnames;
 time_full = raw_data.time;
@@ -81,7 +82,9 @@ end
 % time = time(1:end-lag,:);       % Remove incomplete final sample(s)
 
 %% Normalize cleaned data
-treated = normalize(treated);
+treatedX = zscore(treated(:,1:end-1));
+treatedY = treated(:,end) - mean(treated(:,end));
+treated = zscore(treated); % For the sake of the next plots
 
 %% Plot cleaned/treated dataset
 subhists(treated, 3:7, varnames);

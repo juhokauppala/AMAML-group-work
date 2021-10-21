@@ -1,4 +1,4 @@
-function [result] = sparse_pls(data)
+function [result] = sparse_pls(dataX, dataY)
 %SPLS Sparse Partial Least Squares
 %   https://doi.org/10.1016/j.jneumeth.2016.06.011
 %   Example solution based on the same article:
@@ -8,8 +8,8 @@ function [result] = sparse_pls(data)
 addpath("Week 5/spls");
 
 % 2.2.1. SPLS algorithm
-X = data(:,1:end-1);
-Y = data(:,end);
+X = dataX;
+Y = dataY;
 
 runs = 6;
 result = zeros(runs, 2);

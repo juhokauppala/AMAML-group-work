@@ -1,30 +1,57 @@
-function rsqPLS = pls(data)
+function rsqPLS = pls(dataX, dataY)
 %PLS Summary of this function goes here
 %   Detailed explanation goes here
 
 %% Prep data
-X = data(:,1:end-1);
-Y = data(:,end);
+X = dataX;
+Y = dataY;
 [n, m] = size(X);
 
 % clear temp variables
 clearvars data
 
-%% Finding PCs
-[~, ~, ~, ~, ~, PCTVAR, ~, ~] = ...
-                                    plsregress(X, Y, m, 'cv', 30);
-pc = find(cumsum(100*PCTVAR(2,:))/sum(PCTVAR(2,:))>95,1);
+% Finding PCs - we're not sole finding PCs using the explained 
+% variance.
 
-% figure
-% plot(0:m, MSE(2,:));
+m = 20; % number of consecutive measurements kept in the model
+for j = 1:20 
+    for i = 1:(length(X)-(m+1))
+        [XL,YL,XS,YS,BETA,PCTVAR,MSE,stats] = plsregress(X(i:(i+m),:), Y(i:(i+m)), j);
+        % resusbtitution
+        yfitPLSRes = [ones(size(X(i:(i+m),:),1),1) X(i:(i+m),:)]*BETA;
+        heatmapcR(i).beta = BETA;
+        TSSRes = sum((Y(i:(i+m)) - mean(Y(i:(i+m)))).^2);
+        RSSRes = sum((Y(i:(i+m)) - yfitPLSRes).^2);
+        rsquaredRes(i) = 1 - RSSRes/TSSRes; % cal: resubstitution
+    end
+    meanR2(j) = nanmean(rsquaredRes'); % Aim is to see here that on average, the fitness is better
+end
 
-%% PLS with PCs
-[~, ~, ~, ~, beta, ~, ~, ~] = ...
-                                    plsregress(X, Y, pc, 'cv', 30);
-yfit = [ones(n,1) X]*beta;
-TSS = sum(Y.^2);
-RSS = sum((Y-yfit).^2);
-rsqPLS = 1 - RSS/TSS;
-fprintf('Rsq for PLS = %2.2f%%\n',100*rsqPLS);
+for i = 1:length(heatmapcR)
+    for j = 1:11
+        cdata(i,j) = heatmapcR(i).beta(j,1);
+    end
+end
+
+heatmap(cdata(1:20,:)'); % Differences with time. %%put also variale name coefficients on axis next to the beta
+xlabel("Observations no."); ylabel("Beta Coefficients");
+
+figure 
+plot(rsquaredRes(1:20))
+xlabel("Observations");
+xticklabels(1:20);
+ylabel("R2");
+
+% %% PLS with PCs
+% [~, ~, ~, ~, beta, ~, ~, ~] = ...
+%                                     plsregress(X, Y, pc, 'cv', 10);
+% yfit = [ones(n,1) X]*beta;
+% TSS = sum(Y.^2);
+% RSS = sum((Y-yfit).^2);
+% rsqPLS = 1 - RSS/TSS;
+
+rsqPLS = max(meanR2)*100;
+
+fprintf('Rsq for PLS = %2.2f%%\n',rsqPLS);
 end
 

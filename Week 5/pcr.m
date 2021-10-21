@@ -1,11 +1,11 @@
-function rsqPCR = pcr(data)
+function rsqPCR = pcr(dataX, dataY)
 %PCR Summary of this function goes here
 %   Detailed explanation goes here
 
 %% Prep data
-X = data(:,1:end-1);
-Y = data(:,end);
-[n, ~] = size(data);
+X = dataX;
+Y = dataY;
+[n, ~] = size(dataX);
 
 %% Get Principle Components (PCA)
 [PCALoadings, PCAScores, ~, ~, Expl] = pca(X, 'Economy', false);
