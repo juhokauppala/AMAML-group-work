@@ -26,14 +26,3 @@ results.pcr = pcr(pretreated_dataX, pretreated_dataY);
 
 results.sparse_pls = sparse_pls(pretreated_dataX, pretreated_dataY);
 results.kernel_pls = kernel_pls(pretreated_dataX, pretreated_dataY);
-
-%% Sparse PLS code
-% <include>sparse_pls.m</include>
-%% Sparse PLS function: S
-% <include>S.m</include>
-%% Sparse PLS function: find_lambda
-% <include>find_lambda.m</include>
-%% Sparse PLS function: update_uv
-% <include>update_uv.m</include>
-%% Sparse PLS function: spls (From public github implementation)
-% <include>spls.m</include>
