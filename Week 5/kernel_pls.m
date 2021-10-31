@@ -1,6 +1,11 @@
 function rsqKPLS = kernel_pls(dataX, dataY)
-%PLS Summary of this function goes here
-%   Detailed explanation goes here
+%Kernel PLS is a PLS method with the inputs mapped to a higher dimensional space
+%using a kernel function. In this function, a gaussian function is
+%automatically applied to dataX, then linear regression performed to
+%estimate dataY.
+%   X is the cleaned input matrix of mining process data. Y is the output
+%   silica concentration known for the data. The function then fits the
+%   input data to the output data using KPLS.
 %% Prep data
 % Get data
 X = dataX;
