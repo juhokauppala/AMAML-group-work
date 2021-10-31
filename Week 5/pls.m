@@ -14,7 +14,7 @@ clearvars data
 % variance.
 
 m = 20; % number of consecutive measurements kept in the model
-for j = 1:20 
+for j = 1:20
     for i = 1:(length(X)-(m+1))
         [XL,YL,XS,YS,BETA,PCTVAR,MSE,stats] = plsregress(X(i:(i+m),:), Y(i:(i+m)), j);
         % resusbtitution
@@ -28,13 +28,21 @@ for j = 1:20
 end
 
 for i = 1:length(heatmapcR)
-    for j = 1:11
+    for j = 1:size(X, 2)
         cdata(i,j) = heatmapcR(i).beta(j,1);
     end
 end
 
-heatmap(cdata(1:20,:)'); % Differences with time. %%put also variale name coefficients on axis next to the beta
-xlabel("Observations no."); ylabel("Beta Coefficients");
+% Use this to plot only 1 heatmap
+offset_1 = 0;
+% Use this to plot 10 heatmaps
+offset_10 = 0:390:3900;
+
+for offset = offset_1
+    figure;
+    heatmap(cdata(1 + offset:20 + offset,:)'); % Differences with time. %%put also variale name coefficients on axis next to the beta
+    xlabel("Observations no."); ylabel("Beta Coefficients");
+end
 
 figure 
 plot(rsquaredRes(1:20))
